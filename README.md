@@ -81,7 +81,7 @@ Para testar datas especiais sem esperar: `index.html#tema-natal`, `#tema-anonovo
 
 ## Privacidade
 
-Quem deu o presente (admin) consegue ler o diário e as respostas de memória pelo painel. O app avisa isso na tela de entrada e nos termos de uso.
+Quem deu o presente (admin) consegue ler as respostas de memória pelo painel. O app avisa isso na tela de entrada e nos termos de uso.
 
 ## Créditos
 
