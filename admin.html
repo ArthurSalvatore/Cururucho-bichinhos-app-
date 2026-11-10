@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1e1133">
+<meta name="robots" content="noindex">
+<title>Bichinhos · painel</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{--black:#0b0710;--ink:#1a1020;--panel:#18101f;--purple:#7b47bf;--purple-l:#b796e0;--purple-d:#4e2a82;--pink:#e66aa3;--pink-l:#f2b6d3;--white:#f6eef4}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 50% -10%,#2a1446 0%,transparent 60%),var(--black);color:var(--white);font-family:'VT323',monospace;font-size:21px;min-height:100vh}
+.wrap{max-width:620px;margin:0 auto;padding:max(20px,env(safe-area-inset-top)) 14px 40px}
+h1{font-family:'Pixelify Sans',monospace;color:var(--pink-l);text-shadow:4px 4px 0 var(--purple-d),7px 7px 0 #000;font-size:38px;margin:0;text-align:center}
+.sub{text-align:center;color:var(--purple-l);margin:4px 0 14px}
+.card{background:var(--panel);border:4px solid #000;box-shadow:0 0 0 4px var(--purple-d),8px 8px 0 4px #000;padding:14px;margin:14px 4px}
+nav{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:0 4px}
+button{font-family:'Pixelify Sans',monospace;font-weight:600;font-size:15px;color:var(--white);background:var(--purple);border:4px solid #000;box-shadow:4px 4px 0 #000;padding:9px 8px;cursor:pointer}
+button:active{transform:translate(4px,4px);box-shadow:none}
+button.pink{background:var(--pink);color:var(--ink)} button.dark{background:#2a1a3e}
+button:disabled{opacity:.5;cursor:not-allowed}
+nav button{font-size:12px;padding:7px 2px;background:#2a1a3e}
+nav button.on{background:var(--pink);color:var(--ink)}
+.page{display:none}.page.on{display:block}
+h2{font-family:'Pixelify Sans',monospace;color:var(--pink-l);font-size:22px;margin:0 0 8px}
+input,select,textarea{width:100%;font-family:'VT323',monospace;font-size:22px;border:4px solid #000;padding:6px 8px;background:#fff;color:var(--ink);margin:4px 0 10px}
+textarea{min-height:140px;resize:vertical}
+label{color:var(--purple-l);font-size:19px}
+.entry{background:#efe3ec;color:var(--ink);border:4px solid #000;box-shadow:4px 4px 0 #000;padding:10px 12px;margin-bottom:14px}
+.entry .d{font-family:'Pixelify Sans',monospace;font-size:12px;color:var(--purple);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.entry .q{font-style:italic;color:#6d5a80;font-size:19px}
+.entry .t{font-size:23px;line-height:1.05;margin:4px 0 6px;white-space:pre-wrap;word-wrap:break-word}
+.entry .r{font-size:19px;background:#fff;border:3px solid #000;padding:5px 8px;line-height:1.05}
+.entry.new{box-shadow:4px 4px 0 #000,0 0 0 4px var(--pink)}
+.msg{color:var(--pink-l);font-size:19px;margin-top:6px}
+.empty{color:var(--purple-l);text-align:center;padding:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px}
+.bar{height:14px;border:3px solid #000;background:#2a1d38;margin-top:2px}
+.bar i{display:block;height:100%;background:var(--c)}
+.kv{display:flex;justify-content:space-between;border-bottom:2px dashed #3a2752;padding:4px 0}
+.kv b{color:var(--pink-l);font-weight:normal}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>PAINEL</h1>
+  <div class="sub">painel de quem deu os bichinhos 🎁</div>
+
+  <div class="card" id="login" style="display:none"></div>
+
+  <div id="app" style="display:none">
+    <nav id="nav">
+      <button data-p="diario" class="on">📔 Diário</button>
+      <button data-p="larth">🐾 Bichos</button>
+      <button data-p="enviar">💌 Enviar</button>
+      <button data-p="enviados">📮 Enviados</button>
+      <button data-p="conta">⚙️ Conta</button>
+    </nav>
+
+    <section class="card page on" id="p-diario">
+      <h2>Diário e memórias</h2>
+      <div style="color:var(--purple-l);font-size:18px;margin-bottom:6px">As páginas do diário e as respostas das perguntas de memória aparecem aqui na hora.</div>
+      <select id="dFilter"><option value="">todas as pessoas</option></select>
+      <div id="diary"></div>
+    </section>
+
+    <section class="card page" id="p-larth">
+      <h2>Como os bichinhos estão</h2>
+      <div id="status"></div>
+    </section>
+
+    <section class="card page" id="p-enviar">
+      <h2>Mandar uma coisa pra ela</h2>
+      <label>Tipo</label>
+      <select id="sKind">
+        <option value="recado">💬 Recado (curtinho, o bichinho fala na hora)</option>
+        <option value="cartinha">💌 Cartinha (fica guardada no álbum)</option>
+        <option value="presente">🎁 Presente (acessório pro bichinho)</option>
+      </select>
+      <label>Pra quem</label>
+      <select id="sTo"></select>
+      <label>Título</label>
+      <input id="sTitle" maxlength="80" placeholder="ex.: Bom dia, Princesa">
+      <div id="giftRow" style="display:none">
+        <label>Presente</label>
+        <select id="sGift"></select>
+      </div>
+      <label>Texto</label>
+      <textarea id="sBody" maxlength="3000" placeholder="escreve aqui..."></textarea>
+      <button class="pink" id="sSend" style="width:100%">enviar 💌</button>
+      <div class="msg" id="sMsg"></div>
+    </section>
+
+    <section class="card page" id="p-enviados">
+      <h2>Enviados</h2>
+      <div id="sent"></div>
+    </section>
+
+    <section class="card page" id="p-conta">
+      <h2>Conta e avisos</h2>
+      <div id="who" style="margin-bottom:10px"></div>
+      <div style="color:var(--purple-l);font-size:19px">Receba uma notificação no seu celular sempre que ela escrever no diário.</div>
+      <button class="pink" id="bPush" style="width:100%;margin-top:8px">ativar avisos do diário</button>
+      <div class="msg" id="pushMsg"></div>
+      <button class="dark" id="bOut" style="width:100%;margin-top:18px">sair</button>
+    </section>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script type="module">
+const CFG = window.LARTH_CONFIG || {};
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = new Intl.DateTimeFormat("pt-BR", {timeZone:"America/Sao_Paulo", day:"2-digit", month:"2-digit", year:"numeric", hour:"2-digit", minute:"2-digit"});
+const when = ts => ts ? fmt.format(new Date(ts)) : "—";
+const MOODS = {feliz:"😊", animada:"🤩", apaixonada:"🥰", normal:"😐", triste:"😢", cansada:"😴", saudade:"🥺"};
+const GIFTS = {ears:"Orelhas de gatinho", collar:"Coleira com sininho", hat:"Chapéu de bruxa", laco:"Laço", flor:"Florzinha", coroa:"Coroa", fones:"Fones", cachecol:"Cachecol listrado", oculos:"Óculos redondinhos", bone:"Boné (só bichinhos)", tiara:"Tiara de estrelas (só bichinhos)", gravata:"Gravatinha (só bichinhos)", escuros:"Óculos escuros (só bichinhos)", festa:"Chapéu de festa", gorro:"Gorro de Natal", brilho:"Óculos de ano novo", capacete:"Capacete de moto"};
+
+if("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js").catch(()=>{});
+
+if(!CFG.SUPABASE_URL || !CFG.SUPABASE_KEY){
+  $("login").style.display = "block";
+  $("login").innerHTML = "O <b>config.js</b> ainda não foi preenchido. Veja o README.";
+} else start();
+
+async function start(){
+  let createClient;
+  try{ ({ createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm")); }
+  catch(e){ $("login").style.display = "block"; $("login").innerHTML = "Não consegui conectar agora. Confere a internet e recarrega a página."; return; }
+  const sb = createClient(CFG.SUPABASE_URL, CFG.SUPABASE_KEY, {auth:{persistSession:true, autoRefreshToken:true, detectSessionInUrl:false}});
+  let user = null, users = [];
+
+  async function boot(){
+    const { data } = await sb.auth.getSession();
+    user = data.session ? data.session.user : null;
+    if(!user) return showLogin();
+    const { data: ok } = await sb.rpc("is_admin");
+    if(!ok){
+      $("app").style.display = "none"; $("login").style.display = "block";
+      $("login").innerHTML = `Você entrou como <b>${esc(user.email)}</b>, mas esse e-mail não está na lista de admins (tabela <b>app_admins</b>).<br><br><button class="dark" id="x">sair</button>`;
+      $("x").onclick = async () => { await sb.auth.signOut(); boot(); };
+      return;
+    }
+    $("login").style.display = "none"; $("app").style.display = "block";
+    $("who").innerHTML = `Conectado como <b style="color:var(--pink-l)">${esc(user.email)}</b>`;
+    await loadUsers(); loadDiary(); loadStatus(); loadSent(); live();
+  }
+
+  function showLogin(msg = ""){
+    $("app").style.display = "none"; $("login").style.display = "block";
+    $("login").innerHTML = `<h2>Entrar no painel</h2>Seu e-mail de admin:<input id="lEmail" type="email" autocomplete="email">Senha (mínimo 6):<input id="lPass" type="password" autocomplete="current-password"><button class="pink" id="lIn">entrar</button> <button class="dark" id="lUp">criar conta</button><div class="msg">${esc(msg)}</div>`;
+    const creds = () => ({email:$("lEmail").value.trim(), password:$("lPass").value});
+    $("lIn").onclick = async () => {
+      const { error } = await sb.auth.signInWithPassword(creds());
+      if(error) showLogin(/invalid/i.test(error.message) ? "E-mail ou senha errados. Primeira vez? Toque em “criar conta”." : "Erro: " + error.message); else boot();
+    };
+    $("lUp").onclick = async () => {
+      const c = creds(); if(c.password.length < 6) return showLogin("A senha precisa ter pelo menos 6 caracteres.");
+      const { data, error } = await sb.auth.signUp(c);
+      if(error) showLogin("Erro: " + error.message);
+      else if(!data.session) showLogin("Conta criada, mas o Supabase ainda pede confirmação por e-mail. Desligue “Confirm email” (veja o LEIAME, passo 3) e tente entrar.");
+      else boot();
+    };
+  }
+
+  function nameOf(email){ const u = users.find(x => x.email === email); const d = (u && u.data) || {}; const nm = d.name || ""; return nm ? `${nm} (${email})` : (email || ""); }
+  async function loadUsers(){
+    const { data } = await sb.from("larth_state").select("user_id,email,updated_at,data").order("updated_at", {ascending:false});
+    users = data || [];
+    const label = u => { const d = u.data || {}; const nm = d.name || ""; const pet = d.petName || ""; return `${nm ? nm + " · " : ""}${pet ? pet + " · " : ""}${u.email || u.user_id}`; };
+    $("dFilter").innerHTML = `<option value="">todas as pessoas</option>` + users.map(u => `<option value="${esc(u.email || "")}">${esc(label(u))}</option>`).join("");
+    $("dFilter").onchange = () => loadDiary();
+    $("sTo").innerHTML = users.length
+      ? users.map(u => `<option value="${u.user_id}">${esc(label(u))}</option>`).join("") + `<option value="">todo mundo</option>`
+      : `<option value="">(ela ainda não entrou no app — vai pra todo mundo)</option>`;
+  }
+
+  async function loadDiary(highlight){
+    let q = sb.from("diary").select("*").order("created_at", {ascending:false}).limit(300);
+    if($("dFilter").value) q = q.eq("email", $("dFilter").value);
+    const { data, error } = await q;
+    if(error){ $("diary").innerHTML = `<div class="empty">Erro ao carregar: ${esc(error.message)}</div>`; return; }
+    $("diary").innerHTML = (data && data.length) ? data.map(e => `
+      <div class="entry ${highlight === e.id ? "new" : ""}">
+        <div class="d"><span>${when(e.created_at)}</span><span>${e.mood === "memoria" ? "💭 memória" : MOODS[e.mood] ? MOODS[e.mood] + " " + esc(e.mood) : ""}</span><span>${esc(nameOf(e.email))}</span></div>
+        <div class="q">${esc(e.question)}</div>
+        <div class="t">${esc(e.body)}</div>
+        ${e.reply ? `<div class="r"><b style="font-family:'Pixelify Sans';font-size:11px;color:#7b47bf">O BICHINHO RESPONDEU:</b><br>${esc(e.reply)}</div>` : ""}
+      </div>`).join("") : `<div class="empty">Nenhuma página ainda. Quando ela escrever, aparece aqui na hora. 📔</div>`;
+  }
+
+  async function loadStatus(){
+    const { data } = await sb.from("larth_state").select("*").order("updated_at", {ascending:false});
+    if(!data || !data.length){ $("status").innerHTML = `<div class="empty">Ela ainda não entrou no app com o e-mail.</div>`; return; }
+    $("status").innerHTML = data.map(r => {
+      const s = r.data || {};
+      const bar = (n, c, l) => `<div><label>${l} ${Math.round(s[n] ?? 0)}%</label><div class="bar" style="--c:${c}"><i style="width:${Math.round(s[n] ?? 0)}%"></i></div></div>`;
+      const ach = Object.keys(s.ach || {}).length;
+      const style = Object.values(s.style || {}).filter(Boolean).map(id => GIFTS[id] || id).join(", ") || "nada";
+      return `<div class="entry">
+        <div class="d"><span>${esc((s.name ? s.name + " · " : "") + (s.petName || "sem bichinho ainda"))}</span><span>${esc(r.email || "")}</span><span>visto por último: ${when(r.updated_at)}</span></div>
+        <div class="grid" style="margin:8px 0">${bar("hunger","#e66aa3","🍓 barriga")}${bar("fun","#b796e0","✨ diversão")}${bar("love","#c8c3d6","🤍 carinho")}${bar("energy","#7b47bf","🌙 energia")}</div>
+        <div class="kv"><span>dias cuidando</span><b>${s.daysCared ?? 0}</b></div>
+        <div class="kv"><span>cuidados hoje</span><b>${s.today === new Intl.DateTimeFormat("en-CA",{timeZone:"America/Sao_Paulo"}).format(new Date()) ? (s.todayActions ?? 0) : 0}/4</b></div>
+        <div class="kv"><span>cartinhas abertas</span><b>${s.letters ?? 0}</b></div>
+        <div class="kv"><span>selos</span><b>${ach} de 27</b></div>
+        <div class="kv"><span>páginas no diário (total)</span><b>${(s.diary || []).length}</b></div>
+        <div class="kv"><span>recorde de estrelinhas</span><b>${(s.c && s.c.best) || 0}</b></div>
+        <div class="kv"><span>memórias respondidas</span><b>${(s.memories || []).length}</b></div>
+        <div class="kv"><span>está usando</span><b>${esc(style)}</b></div>
+        <div class="kv"><span>notificações</span><b>${s.pushOn ? "ativadas" : "não ativadas"}</b></div>
+        <div class="kv"><span>dormindo agora</span><b>${s.asleep ? "sim 💤" : "não"}</b></div>
+      </div>`;
+    }).join("");
+  }
+
+  async function loadSent(){
+    const { data } = await sb.from("messages").select("*").order("created_at", {ascending:false}).limit(200);
+    const ic = {recado:"💬", cartinha:"💌", presente:"🎁"};
+    $("sent").innerHTML = (data && data.length) ? data.map(m => `
+      <div class="entry">
+        <div class="d"><span>${ic[m.kind] || ""} ${esc(m.kind)}</span><span>${when(m.created_at)}</span><span>${m.read_at ? "✓ lida " + when(m.read_at) : "ainda não lida"}</span></div>
+        <div class="t" style="font-size:21px"><b>${esc(m.title || "")}</b>${m.gift ? " · " + esc(GIFTS[m.gift] || m.gift) : ""}<br>${esc(m.body || "")}</div>
+      </div>`).join("") : `<div class="empty">Nada enviado ainda.</div>`;
+  }
+
+  function live(){
+    sb.channel("admin-diary").on("postgres_changes", {event:"INSERT", schema:"public", table:"diary"}, p => loadDiary(p.new.id)).subscribe();
+    setInterval(() => { loadStatus(); loadSent(); }, 60000);
+  }
+
+  $("sGift").innerHTML = Object.entries(GIFTS).map(([id, n]) => `<option value="${id}">${esc(n)}</option>`).join("");
+  $("sKind").onchange = () => { $("giftRow").style.display = $("sKind").value === "presente" ? "" : "none"; };
+  $("sSend").onclick = async () => {
+    const kind = $("sKind").value, title = $("sTitle").value.trim(), body = $("sBody").value.trim();
+    if(kind !== "presente" && !body){ $("sMsg").textContent = "Escreve alguma coisa primeiro."; return; }
+    $("sSend").disabled = true; $("sMsg").textContent = "Enviando...";
+    const row = {kind, title: title || null, body: body || null, to_user: $("sTo").value || null, gift: kind === "presente" ? $("sGift").value : null};
+    const { data, error } = await sb.from("messages").insert(row).select("id").single();
+    if(error){ $("sMsg").textContent = "Erro: " + error.message; $("sSend").disabled = false; return; }
+    const r = await sb.functions.invoke("push", {body:{type:"message", id:data.id}}).catch(e => ({error:e}));
+    const n = r && r.data && r.data.sent;
+    $("sMsg").textContent = n ? `Enviado! Notificação chegou em ${n} aparelho(s). 💜` : "Enviado! Ela vê quando abrir o app. (Notificação não foi entregue: ela ainda não ativou, ou a função não está configurada.)";
+    $("sTitle").value = ""; $("sBody").value = ""; $("sSend").disabled = false;
+    loadSent();
+  };
+
+  $("bPush").onclick = async () => {
+    const msg = t => $("pushMsg").textContent = t;
+    if(!CFG.VAPID_PUBLIC_KEY){ msg("Falta a VAPID_PUBLIC_KEY no config.js."); return; }
+    if(!("serviceWorker" in navigator) || !("PushManager" in window)){ msg("Esse navegador não aceita notificações (no iPhone, instale o app na tela de início e abra admin.html por lá)."); return; }
+    const perm = await Notification.requestPermission();
+    if(perm !== "granted"){ msg("Permissão negada."); return; }
+    const reg = await navigator.serviceWorker.ready;
+    const pad = "=".repeat((4 - CFG.VAPID_PUBLIC_KEY.length % 4) % 4);
+    const key = Uint8Array.from(atob((CFG.VAPID_PUBLIC_KEY + pad).replace(/-/g,"+").replace(/_/g,"/")), c => c.charCodeAt(0));
+    let sub = await reg.pushManager.getSubscription();
+    if(!sub) sub = await reg.pushManager.subscribe({userVisibleOnly:true, applicationServerKey:key});
+    const j = sub.toJSON();
+    const { error } = await sb.from("push_subscriptions").upsert({endpoint:j.endpoint, user_id:user.id, p256dh:j.keys.p256dh, auth:j.keys.auth, is_admin:true});
+    msg(error ? "Erro: " + error.message : "Pronto! Você vai ser avisado quando ela escrever. 📔");
+  };
+  $("bOut").onclick = async () => { await sb.auth.signOut(); boot(); };
+
+  document.querySelectorAll("#nav button").forEach(b => b.onclick = () => {
+    document.querySelectorAll("#nav button").forEach(x => x.classList.toggle("on", x === b));
+    document.querySelectorAll(".page").forEach(p => p.classList.toggle("on", p.id === "p-" + b.dataset.p));
+    if(b.dataset.p === "larth") loadStatus();
+    if(b.dataset.p === "enviados") loadSent();
+  });
+
+  boot();
+}
+</script>
+</body>
+</html>

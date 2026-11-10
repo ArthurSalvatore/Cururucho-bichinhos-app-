@@ -1,0 +1,17 @@
+{
+  "name": "Seu bichinho 🎁",
+  "short_name": "Bichinho",
+  "description": "Um bichinho de presente pra cuidar todo dia.",
+  "lang": "pt-BR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0710",
+  "theme_color": "#1e1133",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

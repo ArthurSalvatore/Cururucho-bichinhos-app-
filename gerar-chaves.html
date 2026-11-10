@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gerar chaves dos Bichinhos</title>
+<style>
+  body{font-family:system-ui,sans-serif;background:#1a1025;color:#f6eef4;max-width:680px;margin:30px auto;padding:0 16px;line-height:1.45}
+  h1{color:#f2b6d3} code,textarea{font-family:ui-monospace,monospace}
+  label{display:block;margin-top:16px;font-weight:600;color:#b796e0}
+  textarea{width:100%;height:58px;background:#fff;color:#1a1020;border:3px solid #000;padding:8px;font-size:14px}
+  button{background:#e66aa3;border:3px solid #000;padding:10px 16px;font-weight:700;cursor:pointer;font-size:16px}
+  .warn{background:#3a1f2c;border-left:4px solid #e66aa3;padding:10px 12px;margin:14px 0}
+</style>
+</head>
+<body>
+<h1>🐾 Gerar chaves dos Bichinhos</h1>
+<p>Esta página roda só no seu computador e não envia nada pra internet. Ela gera as chaves das notificações (VAPID) e um segredo pros avisos automáticos. Use chaves novas, diferentes das da Larth.</p>
+<button id="go">gerar chaves</button>
+<div id="out" style="display:none">
+  <label>VAPID_PUBLIC_KEY (vai no <code>config.js</code> e nos segredos da função)</label>
+  <textarea id="pub" readonly></textarea>
+  <label>VAPID_PRIVATE_KEY (só nos segredos da função, nunca no config.js)</label>
+  <textarea id="priv" readonly></textarea>
+  <label>CRON_SECRET (segredo da função, do cron.sql e do cron-eventos.sql)</label>
+  <textarea id="cron" readonly></textarea>
+  <div class="warn">Guarde essas três em um lugar seguro. Se gerar de novo, as notificações já ativadas param de funcionar e precisam ser ativadas outra vez.</div>
+</div>
+<script>
+function b64url(bytes){ let s = ""; bytes.forEach(b => s += String.fromCharCode(b)); return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
+document.getElementById("go").onclick = async () => {
+  const kp = await crypto.subtle.generateKey({name:"ECDSA", namedCurve:"P-256"}, true, ["sign","verify"]);
+  const raw = new Uint8Array(await crypto.subtle.exportKey("raw", kp.publicKey));
+  const jwk = await crypto.subtle.exportKey("jwk", kp.privateKey);
+  document.getElementById("pub").value = b64url(raw);
+  document.getElementById("priv").value = jwk.d;
+  document.getElementById("cron").value = b64url(crypto.getRandomValues(new Uint8Array(24)));
+  document.getElementById("out").style.display = "block";
+};
+</script>
+</body>
+</html>

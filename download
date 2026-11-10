@@ -1,0 +1,7 @@
+# configuração com os dados do seu projeto (nunca suba)
+config.js
+.env
+*.env
+supabase/.temp/
+.DS_Store
+Thumbs.db
